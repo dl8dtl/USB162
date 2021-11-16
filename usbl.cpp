@@ -121,11 +121,11 @@ ISR(USB_COM_vect)
 }
 
 // Read n bytes of the received data in the given buffer
-void readUSB(void* buffer, uint16_t length)
+void readUSB(uint8_t* buffer, uint16_t length)
 {
 	while (length--)
 	{
-		*(uint8_t*)buffer++ = UEDATX; // Read data in buffer
+		*buffer++ = UEDATX; // Read data in buffer
 	}
 }
 
@@ -146,7 +146,7 @@ bool waitForHost()
 }
 
 // Writes n bytes from the given buffer in the USB buffer (FIFO), and send it to the host
-void writeUSB(const void* buffer, uint16_t length, uint8_t epsize, bool fromPROGMEM)
+void writeUSB(const uint8_t* buffer, uint16_t length, uint8_t epsize, bool fromPROGMEM)
 {
 	uint8_t sentBytes = 0;
 	while (length--)
@@ -157,7 +157,7 @@ void writeUSB(const void* buffer, uint16_t length, uint8_t epsize, bool fromPROG
 		}
 		else
 		{
-			UEDATX = *(uint8_t*)buffer++;
+			UEDATX = *buffer++;
 		}
 		sentBytes++;
 		
@@ -182,7 +182,7 @@ bool handleUSBSetupRequest()
 	
 	// Read request
 	USB_Setup_Request request;
-	readUSB(&request, sizeof(USB_Setup_Request));
+	readUSB((uint8_t*)&request, sizeof(USB_Setup_Request));
 	
 	// Clear interrupt bit to begin data stage
 	clr(UEINTX, RXSTPI);
@@ -195,7 +195,7 @@ bool handleUSBSetupRequest()
 		{
 			case STND_REQUEST_GET_STATUS: {
 				uint16_t status = (STATUS_REMOTE_WAKEUP << 1) | (STATUS_SELF_POWERED << 0); // Make status word
-				writeUSB(&status, 2, CONTROL_ENDPOINT_SIZE, false);
+				writeUSB((uint8_t*)&status, 2, CONTROL_ENDPOINT_SIZE, false);
 				break;
 			}
 			case STND_REQUEST_SET_ADDRESS: {
@@ -210,17 +210,17 @@ bool handleUSBSetupRequest()
 				uint8_t descriptorIndex = request.wValue & 0xFF;
 				
 				// Get matching descriptor
-				const void* descriptorPointer = 0;
+				const uint8_t* descriptorPointer = 0;
 				uint16_t descriptorSize = 0;
 				switch (descriptorType)
 				{
 					case DESCRIPTOR_TYPE_DEVICE:
-					descriptorPointer = &deviceDescriptor;
+					descriptorPointer = (uint8_t*)&deviceDescriptor;
 					descriptorSize = sizeof(USB_Device_Descriptor);
 					break;
 					case DESCRIPTOR_TYPE_STRING:
 					case DESCRIPTOR_TYPE_CONFIGURATION:
-					descriptorPointer = getConfigurationDescriptor(descriptorType, descriptorIndex, &descriptorSize);
+					descriptorPointer = (uint8_t*)getConfigurationDescriptor(descriptorType, descriptorIndex, &descriptorSize);
 					break;
 				}
 				
