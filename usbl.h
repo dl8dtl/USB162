@@ -13,7 +13,7 @@ void configEndpoint(uint8_t num, uint8_t size, uint8_t type, bool inEP, bool dou
 
 void readUSB(uint8_t* buffer, uint16_t length);
 bool sendUSB();
-void writeUSB(const uint8_* buffer, uint16_t length, uint8_t epsize, bool fromPROGMEM);
+void writeUSB(const uint8_t* buffer, uint16_t length, uint8_t epsize, bool fromPROGMEM);
 bool waitForHost();
 bool handleUSBSetupRequest();
 
