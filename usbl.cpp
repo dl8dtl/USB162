@@ -22,7 +22,7 @@ void setupUSB()
 	
 	// Enable and configure PLL
 	clr(USBCON, FRZCLK);
-	clr(PLLCSR, PLLP0);
+	set(PLLCSR, PLLP0);
 	clr(PLLCSR, PLLP1);
 	clr(PLLCSR, PLLP2);
 	set(PLLCSR, PLLE);
