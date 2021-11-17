@@ -9,6 +9,8 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
+#include <avr/pgmspace.h>
+
 #define CONTROL_ENDPOINT_SIZE 64
 
 /* bmRequestType Values */
@@ -152,13 +154,17 @@ typedef struct
 } __attribute__((packed)) USB_Endpoints_Descriptor;
 
 /* Helper function tho define string descriptors */
-#define WCHAR_TO_STRING_DESCRIPTOR(wchar) {.bLength = sizeof(USB_String_Descriptor) + sizeof(wchar) - 2,.bDescriptorType = DESCRIPTOR_TYPE_STRING,.wString = (wchar)}
+#define WCHAR_TO_STRING_DESCRIPTOR(wchar) { \
+    sizeof(USB_String_Descriptor) + sizeof(wchar) - 2, \
+      DESCRIPTOR_TYPE_STRING, \
+      wchar \
+}
 
 typedef struct  
 {
 	uint8_t			bLength;			// Byte count of this descriptor
 	uint8_t			bDescriptorType;	// Type of the Descriptor
-	const wchar_t*	wString;			// List of chars representing the string
+	const wchar_t wString[];			// List of chars representing the string
 } __attribute__((packed)) USB_String_Descriptor;
 
 /* Language ids for string descriptors */
@@ -173,7 +179,7 @@ typedef struct
 	uint8_t			bDescriptorType;	// Type of the Descriptor
 	uint16_t		wLANGID[1];			// Language ID as word
 } __attribute__((packed)) USB_Lang_Descriptor;
-const USB_Lang_Descriptor languageDescriptor =
+const USB_Lang_Descriptor languageDescriptor PROGMEM =
 {
 	.bLength = 4,
 	.bDescriptorType = DESCRIPTOR_TYPE_STRING,
