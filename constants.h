@@ -155,16 +155,18 @@ typedef struct
 
 /* Helper function tho define string descriptors */
 #define WCHAR_TO_STRING_DESCRIPTOR(wchar) { \
-    sizeof(USB_String_Descriptor) + sizeof(wchar) - 2, \
+    sizeof(wchar), \
       DESCRIPTOR_TYPE_STRING, \
       wchar \
 }
+
+#define MAX_STRING_LENGTH 42
 
 typedef struct  
 {
 	uint8_t			bLength;			// Byte count of this descriptor
 	uint8_t			bDescriptorType;	// Type of the Descriptor
-	const wchar_t wString[];			// List of chars representing the string
+	const wchar_t wString[MAX_STRING_LENGTH];	// List of chars representing the string
 } __attribute__((packed)) USB_String_Descriptor;
 
 /* Language ids for string descriptors */
